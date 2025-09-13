@@ -46,3 +46,68 @@ test_generator = test_datagen.flow_from_directory(
         batch_size=batch_size,
         class_mode='categorical',
         shuffle=False) # Не перемешиваем, чтобы потом сравнить с настоящими метками
+
+# Создаем модель
+model = Sequential()
+
+model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(img_size, img_size, 1)))
+model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.25))
+
+model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.25))
+
+model.add(Flatten())
+model.add(Dense(512, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(num_classes, activation='softmax'))
+
+# Компилируем модель
+model.compile(loss='categorical_crossentropy',
+              optimizer=Adam(learning_rate=0.0001),
+              metrics=['accuracy'])
+
+# Выводим summary модели
+model.summary()
+
+# Обучаем модель
+history = model.fit(
+    train_generator,
+    steps_per_epoch=train_generator.samples // batch_size,
+    epochs=epochs,
+    validation_data=validation_generator,
+    validation_steps=validation_generator.samples // batch_size
+)
+
+# Оценка модели на тестовых данных
+test_loss, test_acc = model.evaluate(test_generator)
+print(f'Test accuracy: {test_acc}, Test loss: {test_loss}')
+
+# Сохранение модели
+model.save('emotion_recognition_model.h5')
+
+# Построение графиков точности и потерь
+plt.figure(figsize=(12, 6))
+
+plt.subplot(1, 2, 1)
+plt.plot(history.history['accuracy'], label='Training Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.title('Model Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend()
+
+plt.subplot(1, 2, 2)
+plt.plot(history.history['loss'], label='Training Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.title('Model Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.legend()
+
+plt.savefig('training_history.png')
+plt.show()
