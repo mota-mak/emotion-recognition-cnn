@@ -90,7 +90,7 @@ print(f'Test accuracy: {test_acc}, Test loss: {test_loss}')
 
 # Сохранение модели
 model.save('emotion_recognition_model.h5')
-
+#model.save('emotion_recognition_model_keras.keras')
 # Построение графиков точности и потерь
 plt.figure(figsize=(12, 6))
 
