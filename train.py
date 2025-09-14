@@ -81,6 +81,7 @@ history = model.fit(
     epochs=epochs,
     validation_data=validation_generator,
     validation_steps=validation_generator.samples // batch_size
+    verbose=1     
 )
 
 # Оценка модели на тестовых данных
