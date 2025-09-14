@@ -80,8 +80,8 @@ history = model.fit(
     steps_per_epoch=train_generator.samples // batch_size,
     epochs=epochs,
     validation_data=validation_generator,
-    validation_steps=validation_generator.samples // batch_size
-    verbose=1     
+    validation_steps=validation_generator.samples // batch_size,  
+    verbose=1  # для отображения прогресс-бара
 )
 
 # Оценка модели на тестовых данных
